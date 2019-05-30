@@ -1,23 +1,31 @@
-#include <division.h>
+#include "token.h"
+#include "token_stream.h"
+#include "parser.h"
+#include "facilities.h"
 
-static const char *const HEADER = "\nDivider © 2018 Monkey Claps Inc.\n\n";
-static const char *const USAGE = "Usage:\n\tdivider <numerator> <denominator>\n\nDescription:\n\tComputes the result of a fractional division,\n\tand reports both the result and the remainder.\n";
-
-int main(int argc, const char *argv[])
+int main()
 {
   try
   {
-    while (cin)
-      cout << expression() << '\n';
+      while (cin) {
+          Token t = ts.get();
+          if (t.kind == 'q') break; // 'q' for quit
+          if (t.kind == ';')        // ';' for "print now"
+              cout << "=" << t.value << '\n';
+          else
+              ts.putback(t);
+          cout << expression();
+      }
+  	keep_window_open();
   }
-  catch (exception& e)
-  {
-    cerr << e.what() << '\n';
-    return 1;
+  catch (exception& e) {
+      cerr << "error: " << e.what() << '\n';
+  	keep_window_open();
+      return 1;
   }
-  catch (...)
-  {
-    cerr << "exception\n";
-    return 2;
+  catch (...) {
+      cerr << "Oops: unknown exception!\n";
+  	keep_window_open();
+      return 2;
   }
 }
